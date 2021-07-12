@@ -1,0 +1,146 @@
+using System;
+using System.Threading;
+
+namespace Snake1._0._0
+{
+	public class Snake
+	{
+		// 1 Significa que lo puedo quitar del codigo y ponerlo en una clase externa
+		// 2 Significa que no puedo separar estas partes del codigo
+		public int Height = 20; //Alto ah dibujar del mapa de juego
+		public int Widht = 30; //Ancho a dibujar del mapa de juego 
+		ConsoleKeyInfo keyInfo = new ConsoleKeyInfo();
+		char Key = 'W';
+
+		Random rnd = new Random();
+
+		Snake() {
+			X[0] = 5;
+			Y[0] = 5;
+			Console.CursorVisible = false;
+			frutiX = rnd.Next(2, (Widht - 2));
+			frutiY = rnd.Next(2, (Height - 2));
+		}
+
+		int[] X = new int[50]; 
+		int[] Y = new int[50];
+
+		int frutiX;//estas dos arraey pertenecen a Fruta
+		int frutiY;
+
+		int parts = 3;
+
+		public void WriteBoard() {
+			// Cuatro bulcle form para dibujar el espacio de juego
+			Console.Clear();
+			for (int i = 1; i <= (Widht + 2); i++) {
+				//Liña de juego Superiror
+				Console.SetCursorPosition(i, 1);
+				Console.Write("-");
+				/*Cada vez que i sume uno se repetira el bucle agregando una liña 
+				 dibujando asi una liña de 30 guiones (-) + 2 guiones extra 
+				 al final terminara dibujando una liña de 32 guines 
+				 Cada guion es posicionado con setCursorPosition un espacio mas hacia 
+				 la derecha por cada vez que el bucle se repite*/
+			}
+
+			for (int i = 1; i <= (Widht + 2); i++)
+			{
+				//Liña De juego Inferior
+				Console.SetCursorPosition(i,(Height + 2));
+				Console.Write("-");
+				/*Cada vez que i sume uno se repetira el bucle agregando una liña 
+				 dibujando asi una liña de 30 guiones (-) + 2 guiones extra 
+				 al final terminara dibujando una liña de 32 guines 
+				 Cada guion es posicionado con setCursorPosition un espacio mas hacia 
+				 la derecha por cada vez que el bucle se repite*/
+			}
+
+			for (int i = 1; i <= (Height + 1); i++)
+			{
+				//Liña de juego Izquierda
+				Console.SetCursorPosition(1, i);
+				Console.Write("|");
+				/*Cada vez que i sume uno se repetira el bucle agregando una liña 
+				 dibujando asi una liña de 30 guiones (|) + 2 guiones extra 
+				 al final terminara dibujando una liña de 32 guines 
+				 Cada guion es posicionado con setCursorPosition un espacio mas hacia 
+				 la abajo por cada vez que el bucle se repite*/
+			}
+
+			for (int i = 1; i <= (Height + 1); i++)
+			{
+				//Liña de juego derecha
+				Console.SetCursorPosition((Widht+2), i);
+				Console.Write("|");
+				/*Cada vez que i sume uno se repetira el bucle agregando una liña 
+				 dibujando asi una liña de 30 guiones (|) + 2 guiones extra 
+				 al final terminara dibujando una liña de 32 guines 
+				 Cada guion es posicionado con setCursorPosition un espacio mas hacia 
+				 la abajo por cada vez que el bucle se repite*/
+			}
+		}
+
+		public void Input() {
+			if (Console.KeyAvailable) {
+				keyInfo = Console.ReadKey(true);
+				Key = keyInfo.KeyChar; 
+			}
+		}
+
+		public void WritePoint(int X, int Y) {
+			Console.SetCursorPosition(X, Y);
+			Console.Write("O");
+			/*Esto dibuja en cuerpo de la serpiente con una "O" reprecentando una parte de la serpiente*/
+		}
+
+		public void Logic() {
+			if (X[0]==frutiX) {
+				if (Y[0] == frutiY) {
+					parts++;
+					frutiX = rnd.Next(2,(Widht-2));
+					frutiY = rnd.Next(2, (Height-2));
+					/*Esto define la pocision de las frutas poniendo una frunta dentro de el limite de la pantalla
+					 que seria el ancho y el alto de la pantalla menos dos*/
+				}
+			}
+			for (int i = parts; i>1;i--) {
+				X[i - 1] = X[i - 2];
+				Y[i - 1] = Y[i - 2];
+			}
+
+			switch (Key) {
+				case 'w':
+					Y[0]--;
+					break;
+				case 's':
+					Y[0]++;
+					break;
+				case 'd':
+					X[0]++;
+					break;
+				case 'a':
+					X[0]--;
+					break;
+					/*Este Switch se encarga de detectar si alguna tecla 
+					  fue presionada y mover a la serpiente en la pocision 
+					  sumando o restando el valor de las Arrays que definen el espacio de juego*/
+			}
+			for (int i = 0; i<=(parts-1); i++) {
+				WritePoint(X[i], Y[i]);
+				WritePoint(frutiX,frutiY);
+			/*Esto el tamaño de la serpiente y la pocision donde aparecera y restara uno si la serpiente se a movido de lugar*/
+			/*Una vez dibujada la serpiente dibuja la primera fruta aleatoria*/
+			}
+			Thread.Sleep(100);
+		}
+		static void Main(string[] args)
+		{
+			Snake snake = new Snake();
+			while (true) {
+				snake.WriteBoard();
+				snake.Input();
+				snake.Logic(); }
+		}
+	}
+}
